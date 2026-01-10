@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { padding: 20px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 400px; }
+    h2 { margin-top: 0; font-size: 18px; }
+    label { display: block; margin-top: 12px; font-size: 13px; color: #666; }
+    input { width: 100%; padding: 10px; margin-top: 6px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+    button { margin-top: 16px; padding: 10px 24px; cursor: pointer; background: #229ED9; color: white; border: none; border-radius: 6px; font-size: 14px; }
+    button:hover { background: #1a8ac4; }
+    #status { margin-top: 12px; font-size: 13px; }
+    .success { color: #28a745; }
+  </style>
+</head>
+<body>
+  <h2>Telegram Saver 配置</h2>
+
+  <label>Bot Token</label>
+  <input type="text" id="token" placeholder="从 @BotFather 获取">
+
+  <label>Chat ID 或 @频道名</label>
+  <input type="text" id="chatId" placeholder="-100123456789 或 @channel">
+
+  <button id="save">保存</button>
+  <p id="status"></p>
+
+  <script src="options.js"></script>
+</body>
+</html>

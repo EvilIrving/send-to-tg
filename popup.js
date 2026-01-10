@@ -1,0 +1,107 @@
+const statusEl = document.getElementById('status');
+const configPanel = document.getElementById('configPanel');
+const sendPanel = document.getElementById('sendPanel');
+const messageEl = document.getElementById('message');
+let currentTab = null;
+
+async function init() {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  currentTab = tab;
+
+  chrome.storage.local.get(['token', 'chatId'], (res) => {
+    if (res.token && res.chatId) {
+      showSendPanel();
+    } else {
+      showConfigPanel();
+    }
+  });
+}
+
+function showConfigPanel() {
+  configPanel.style.display = 'block';
+  sendPanel.style.display = 'none';
+}
+
+function showSendPanel() {
+  configPanel.style.display = 'none';
+  sendPanel.style.display = 'block';
+
+  // 生成 markdown 格式链接 [标题](URL)
+  const markdownLink = `[${escapeMarkdown(currentTab.title)}](${currentTab.url})`;
+  messageEl.value = markdownLink;
+}
+
+// 防止 markdown 特殊字符导致解析错误
+function escapeMarkdown(text) {
+  return text.replace(/([_*\[\]()~`>#+\-=|{}.!])/g, '\\$1');
+}
+
+// 保存配置
+document.getElementById('saveConfig').addEventListener('click', () => {
+  const token = document.getElementById('token').value.trim();
+  const chatId = document.getElementById('chatId').value.trim();
+
+  if (!token || !chatId) {
+    showStatus('请填写完整', 'error');
+    return;
+  }
+
+  chrome.storage.local.set({ token, chatId }, () => {
+    showStatus('配置已保存', 'success');
+    setTimeout(() => {
+      showSendPanel();
+    }, 500);
+  });
+});
+
+// 发送消息
+document.getElementById('sendBtn').addEventListener('click', async () => {
+  const text = messageEl.value.trim();
+  if (!text) return;
+
+  showStatus('发送中...', '');
+
+  const { token, chatId } = await new Promise(resolve => {
+    chrome.storage.local.get(['token', 'chatId'], r => resolve(r));
+  });
+
+  try {
+    const resp = await fetch(
+      `https://api.telegram.org/bot${token}/sendMessage`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: text,
+          parse_mode: 'Markdown',
+          disable_web_page_preview: true
+        })
+      }
+    );
+
+    const data = await resp.json();
+    if (data.ok) {
+      showStatus('已发送 ✓', 'success');
+      setTimeout(() => window.close(), 800);
+    } else {
+      showStatus('发送失败: ' + data.description, 'error');
+    }
+  } catch (e) {
+    showStatus('网络错误', 'error');
+  }
+});
+
+// 修改配置
+document.getElementById('editConfig').addEventListener('click', () => {
+  chrome.storage.local.clear(() => {
+    showConfigPanel();
+  });
+});
+
+function showStatus(msg, type) {
+  statusEl.textContent = msg;
+  statusEl.className = type;
+}
+
+init();
