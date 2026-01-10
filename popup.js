@@ -61,36 +61,43 @@ document.getElementById('sendBtn').addEventListener('click', async () => {
 
   showStatus('发送中...', '');
 
+  try {
+    await sendToTelegram(text);
+    showStatus('已发送 ✓', 'success');
+    setTimeout(() => window.close(), 800);
+  } catch (e) {
+    if (e.message.includes('未配置')) {
+      chrome.runtime.openOptionsPage?.();
+    } else {
+      showStatus('发送失败', 'error');
+    }
+  }
+});
+
+// 发送到 Telegram
+async function sendToTelegram(text) {
   const { token, chatId } = await new Promise(resolve => {
     chrome.storage.local.get(['token', 'chatId'], r => resolve(r));
   });
 
-  try {
-    const resp = await fetch(
-      `https://api.telegram.org/bot${token}/sendMessage`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: text,
-          parse_mode: 'Markdown',
-          disable_web_page_preview: true
-        })
-      }
-    );
-
-    const data = await resp.json();
-    if (data.ok) {
-      showStatus('已发送 ✓', 'success');
-      setTimeout(() => window.close(), 800);
-    } else {
-      showStatus('发送失败: ' + data.description, 'error');
-    }
-  } catch (e) {
-    showStatus('网络错误', 'error');
+  if (!token || !chatId) {
+    throw new Error('未配置');
   }
-});
+
+  await fetch(
+    `https://api.telegram.org/bot${token}/sendMessage`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: `${text}\n#随手记`,
+        parse_mode: 'Markdown',
+        disable_web_page_preview: true
+      })
+    }
+  );
+}
 
 // 修改配置
 document.getElementById('editConfig').addEventListener('click', () => {
