@@ -36,6 +36,11 @@ function escapeMarkdown(text) {
   return text.replace(/([_*\[\]()~`>#+\-=|{}.!])/g, '\\$1');
 }
 
+// 清理文本中的特殊字符
+function cleanText(text) {
+  return text.replace(/[│┃┋‖丨￢￤﹣－—―…"''『』「」•·\\]+/g, '').replace(/[|]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
 // 保存配置
 document.getElementById('saveConfig').addEventListener('click', () => {
   const token = document.getElementById('token').value.trim();
@@ -91,7 +96,7 @@ async function sendToTelegram(text) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         chat_id: chatId,
-        text: `${text}\n#随手记`,
+        text: `${cleanText(text)}\n#随手记`,
         parse_mode: 'Markdown',
         disable_web_page_preview: true
       })

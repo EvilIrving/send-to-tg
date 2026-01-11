@@ -65,10 +65,3 @@
 ## 卸载
 
 在 `chrome://extensions/` 中移除扩展即可
-
-
-
-1679794310:AAGUlhjKvQZ9qcyICQsWe_VNdOYKQyXivF8
-
-
--1001912953325

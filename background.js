@@ -45,6 +45,11 @@ function escapeMarkdown(text) {
   return text.replace(/([_*\[\]()~`>#+\-=|{}.!])/g, '\\$1');
 }
 
+// 清理文本中的特殊字符
+function cleanText(text) {
+  return text.replace(/[│┃┋‖丨￢￤﹣－—―…"''『』「」•·\\]+/g, '').replace(/[|]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
 // 发送到 Telegram
 async function sendToTelegram(text, sourceUrl = null) {
   const { token, chatId } = await new Promise(resolve => {
@@ -56,7 +61,7 @@ async function sendToTelegram(text, sourceUrl = null) {
     return;
   }
 
-  let fullText = text;
+  let fullText = cleanText(text);
   if (sourceUrl) {
     fullText += `\n\n[Source](${sourceUrl})`;
   }
