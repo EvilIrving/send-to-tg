@@ -27,18 +27,21 @@ function showSendPanel() {
   sendPanel.style.display = 'block';
 
   // 生成 markdown 格式链接 [标题](URL)
-  const markdownLink = `[${escapeMarkdown(currentTab.title)}](${currentTab.url})`;
+  const markdownLink = `[${processTitle(currentTab.title)}](${currentTab.url})`;
   messageEl.value = markdownLink;
 }
 
-// 防止 markdown 特殊字符导致解析错误
-function escapeMarkdown(text) {
-  return text.replace(/([_*\[\]()~`>#+\-=|{}.!])/g, '\\$1');
-}
-
-// 清理文本中的特殊字符
-function cleanText(text) {
-  return text.replace(/[│┃┋‖丨￢￤﹣－—―…"''『』「」•·\\]+/g, '').replace(/[|]/g, ' ').replace(/\s+/g, ' ').trim();
+// 处理标题：清理特殊字符 + 转义 Markdown
+function processTitle(text) {
+  return text
+    // 清理特殊符号
+    .replace(/[│┃┋‖丨￢￤﹣－—―…"''『』「」•·\\\/]+/g, '')
+    // 转义 Markdown 特殊字符
+    .replace(/([_*\[\]()~`>#+=|{}.!])/g, '\\$1')
+    // 规范化
+    .replace(/[|]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 // 保存配置
@@ -96,7 +99,7 @@ async function sendToTelegram(text) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         chat_id: chatId,
-        text: `${cleanText(text)}\n#随手记`,
+        text: `${text}\n#随手记`,
         parse_mode: 'Markdown',
         disable_web_page_preview: true
       })

@@ -23,31 +23,40 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 });
 
+// 处理标题：清理特殊字符 + 转义 Markdown
+function processTitle(text) {
+  console.log(text,'text');
+  
+  return text
+    // 清理特殊符号
+    .replace(/[│┃┋‖丨￢￤﹣－—―…"''『』「」•·\\\/]+/g, '')
+    // 转义 Markdown 特殊字符
+    .replace(/([_*\[\]()~`>#+=|{}.!])/g, '\\$1')
+    // 规范化
+    .replace(/[|]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 // 发送页面（获取标题+URL）
 function sendPageToTelegram(tabId) {
   chrome.scripting.executeScript({
     target: { tabId: tabId },
-    func: () => ({
-      title: document.title,
-      url: location.href
-    })
+    func: () => {
+      const title = document.title
+        .replace(/[│┃┋‖丨￢￤﹣－—―…"''『』「」•·\\\/]+/g, '')
+        .replace(/[|]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      return { title, url: location.href };
+    }
   }, (results) => {
     if (results && results[0]) {
       const { title, url } = results[0].result;
-      const markdownLink = `[${escapeMarkdown(title)}](${url})`;
+      const markdownLink = `[${processTitle(title)}](${url})`;
       sendToTelegram(markdownLink);
     }
   });
-}
-
-// 转义 markdown 特殊字符
-function escapeMarkdown(text) {
-  return text.replace(/([_*\[\]()~`>#+\-=|{}.!])/g, '\\$1');
-}
-
-// 清理文本中的特殊字符
-function cleanText(text) {
-  return text.replace(/[│┃┋‖丨￢￤﹣－—―…"''『』「」•·\\]+/g, '').replace(/[|]/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 // 发送到 Telegram
@@ -61,7 +70,7 @@ async function sendToTelegram(text, sourceUrl = null) {
     return;
   }
 
-  let fullText = cleanText(text);
+  let fullText = text;
   if (sourceUrl) {
     fullText += `\n\n[Source](${sourceUrl})`;
   }

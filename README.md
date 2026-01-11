@@ -1,67 +1,69 @@
 # Telegram Saver
 
-一键将浏览器中的链接保存到 Telegram 群组或频道。
+Save links from your browser to Telegram groups or channels with one click.
 
-## 功能
+## Features
 
-- 点击扩展图标发送当前页面（Markdown 格式超链接）
-- 右键菜单发送选中文字或链接
-- 自动关闭链接预览
-- 配置保存在本地
+- Click the extension icon to send the current page (Markdown format hyperlink)
+- Right-click menu to send selected text or links
+- Auto-disable link preview
+- Configuration saved locally
 
-## 安装
+## Installation
 
-1. Chrome 打开 `chrome://extensions/`
-2. 开启右上角 **开发者模式**
-3. 点击 **加载已解压的扩展程序**
-4. 选择 `telegram-saver` 文件夹
+1. Open `chrome://extensions/` in Chrome
+2. Enable **Developer mode** (top right)
+3. Click **Load unpacked**
+4. Select the `telegram-saver` folder
 
-## 配置
+## Configuration
 
-1. 首次使用点击扩展图标
-2. 填写 Bot Token 和 Chat ID
-3. 点击保存
+1. On first use, click the extension icon
+2. Enter Bot Token and Chat ID
+3. Click Save
 
-### 获取 Bot Token
+### Getting Bot Token
 
-1. Telegram 搜索 **@BotFather**（官方机器人）
-2. 发送 `/newbot`
-3. 按提示输入机器人名称和用户名
-4. 复制获得的 Token，格式类似：`123456789:ABCdefGHIjklMNOpqrsTUVwxyz`
+1. Search for **@BotFather** in Telegram (official bot)
+2. Send `/newbot`
+3. Follow prompts to enter bot name and username
+4. Copy the Token (format: `123456789:ABCdefGHIjklMNOpqrsTUVwxyz`)
 
-### 获取 Chat ID
+### Getting Chat ID
 
-**方法一：@usernamegetid 机器人（推荐）**
+**Method 1: @usernamegetid bot (recommended)**
 
-1. Telegram 搜索 **@usernamegetid**
-2. 把你的机器人拉进频道
-3. 发送 `@频道用户名`，机器人会返回 chat_id
+1. Search for **@usernamegetid** in Telegram
+2. Add your bot to the channel
+3. Send `@channel_username`, the bot will return chat_id
 
-**方法二：getUpdates API**
+**Method 2: getUpdates API**
 
-1. 浏览器访问：
+1. Visit in browser:
+
    ```
    https://api.telegram.org/bot<TOKEN>/getUpdates
    ```
-   把 `<TOKEN>` 换成你的 Bot Token
 
-2. 返回的 JSON 中找到 `chat` → `id`，格式类似：`-100123456789`
+   Replace `<TOKEN>` with your Bot Token
 
-**方法三：直接用 @username**
+2. Find `chat` → `id` in the JSON response (format: `-100123456789`)
 
-公开频道/群组可直接填 `@频道名`，无需获取 ID
+**Method 3: Use @username directly**
 
-## 使用
+For public channels/groups, you can use `@channel_name` directly, no ID needed
 
-- **发送当前页面**：点击扩展图标 → 确认发送
-- **发送选中文字**：右键 → 发送到 Telegram
-- **发送链接**：右键链接 → 发送到 Telegram
-- **修改配置**：点击扩展图标 → 修改配置
+## Usage
 
-## 消息格式
+- **Send current page**: Click extension icon → Confirm send
+- **Send selected text**: Right-click → Send to Telegram
+- **Send link**: Right-click link → Send to Telegram
+- **Modify config**: Click extension icon → Modify config
 
-发送的超链接格式：`[文章标题](https://example.com)`
+## Message Format
 
-## 卸载
+Sent hyperlink format: `[Article Title](https://example.com)`
 
-在 `chrome://extensions/` 中移除扩展即可
+## Uninstallation
+
+Remove the extension from `chrome://extensions/`
