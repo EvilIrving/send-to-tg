@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telegram Saver - Save Web Content to Telegram</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #229ED9;
+      --primary-dark: #1a8ac4;
+      --bg-dark: #0f0f0f;
+      --bg-card: #1a1a1a;
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0a0;
+      --border: #2a2a2a;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 15, 15, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      padding: 0 20px;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 64px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-link {
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 14px;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: inherit;
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+      background: var(--bg-card);
+    }
+
+    .nav-link.active {
+      color: var(--primary);
+      background: rgba(34, 158, 217, 0.1);
+    }
+
+    /* Main Content */
+    main {
+      padding-top: 64px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* Landing Page */
+    .hero {
+      text-align: center;
+      padding: 100px 20px 80px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: 56px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--primary), #64d2ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 20px;
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--primary);
+    }
+
+    /* Features */
+    .features {
+      padding: 80px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .features h2 {
+      text-align: center;
+      font-size: 36px;
+      margin-bottom: 60px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-4px);
+    }
+
+    .feature-icon {
+      font-size: 40px;
+      margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    /* How It Works */
+    .how-it-works {
+      padding: 80px 20px;
+      background: var(--bg-card);
+    }
+
+    .how-it-works h2 {
+      text-align: center;
+      font-size: 36px;
+      margin-bottom: 60px;
+    }
+
+    .steps {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .step {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    .step-number {
+      width: 48px;
+      height: 48px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .step-content h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .step-content p {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    /* Privacy Page */
+    .privacy-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 60px 20px 100px;
+    }
+
+    .privacy-container h1 {
+      font-size: 42px;
+      margin-bottom: 8px;
+    }
+
+    .last-updated {
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+      font-size: 14px;
+    }
+
+    .tldr {
+      background: rgba(34, 158, 217, 0.1);
+      border: 1px solid var(--primary);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 40px;
+    }
+
+    .tldr strong {
+      color: var(--primary);
+    }
+
+    .privacy-section {
+      margin-bottom: 40px;
+    }
+
+    .privacy-section h2 {
+      font-size: 24px;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .privacy-section h3 {
+      font-size: 18px;
+      margin: 20px 0 12px;
+      color: var(--text-primary);
+    }
+
+    .privacy-section p {
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .privacy-section ul {
+      color: var(--text-secondary);
+      margin-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    .privacy-section li {
+      margin-bottom: 8px;
+    }
+
+    .permission-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .permission-card h4 {
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .permission-card p {
+      margin-bottom: 0;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      border-top: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 36px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+
+      .features h2,
+      .how-it-works h2 {
+        font-size: 28px;
+      }
+
+      .step {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-container">
+      <a href="#" class="logo" onclick="showPage('landing')">
+        <span class="logo-icon">✈</span>
+        Telegram Saver
+      </a>
+      <div class="nav-links">
+        <button class="nav-link active" data-page="landing" onclick="showPage('landing')">Home</button>
+        <button class="nav-link" data-page="privacy" onclick="showPage('privacy')">Privacy</button>
+        <a class="btn btn-primary" href="#" style="padding: 8px 16px; font-size: 14px;">Install</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Landing Page -->
+    <div id="landing" class="page active">
+      <section class="hero">
+        <h1>Telegram Saver</h1>
+        <p>Save web pages, links, and selected text to your Telegram channels or groups with just one click.</p>
+        <div class="cta-buttons">
+          <a href="#" class="btn btn-primary">Add to Chrome - It's Free</a>
+          <a href="https://github.com/EvilIrving/send-to-tg" class="btn btn-secondary" target="_blank">View on GitHub</a>
+        </div>
+      </section>
+
+      <section class="features">
+        <h2>Features</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🚀</div>
+            <h3>One-Click Save</h3>
+            <p>Click the extension icon to instantly send the current page as a beautifully formatted Markdown link.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📋</div>
+            <h3>Right-Click Menu</h3>
+            <p>Send selected text, links, or entire pages through the convenient context menu integration.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">✨</div>
+            <h3>Clean Format</h3>
+            <p>Auto-formats content as [Title](URL) in Markdown with link preview disabled for a tidy channel.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>Privacy First</h3>
+            <p>All credentials stored locally. No data collection, no tracking, no external servers.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Lightning Fast</h3>
+            <p>Instant delivery to your Telegram chat. No delays, no loading screens, just quick saves.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>Flexible Targets</h3>
+            <p>Send to any channel, group, or private chat. Support for both Chat IDs and @usernames.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="how-it-works">
+        <h2>How It Works</h2>
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3>Create a Telegram Bot</h3>
+              <p>Message @BotFather on Telegram, send /newbot, and follow the prompts to get your Bot Token.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3>Get Your Chat ID</h3>
+              <p>Use @userinfobot or the getUpdates API to find your channel/group Chat ID, or simply use @channelname.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3>Configure the Extension</h3>
+              <p>Enter your Bot Token and Chat ID in the extension settings. Your credentials are stored securely in your browser.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <h3>Start Saving</h3>
+              <p>Click the extension icon or use the right-click menu to instantly save any web content to Telegram!</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Privacy Page -->
+    <div id="privacy" class="page">
+      <div class="privacy-container">
+        <h1>Privacy Policy</h1>
+        <p class="last-updated">Last Updated: January 12, 2026</p>
+
+        <div class="tldr">
+          <strong>TL;DR:</strong> Telegram Saver operates entirely locally in your browser. We do not collect, store, or transmit any of your personal data to external servers (except to Telegram's API when you explicitly send a message).
+        </div>
+
+        <div class="privacy-section">
+          <h2>Introduction</h2>
+          <p>Welcome to Telegram Saver. This Privacy Policy explains how we handle your information when you use our browser extension. We are committed to protecting your privacy and ensuring transparency about our data practices.</p>
+        </div>
+
+        <div class="privacy-section">
+          <h2>Information We Collect</h2>
+          <p>Telegram Saver is designed with privacy as a core principle. The extension:</p>
+          <ul>
+            <li><strong>Does not collect personal information</strong> - We do not gather any identifiable information about you</li>
+            <li><strong>Does not track your browsing history</strong> - Your web activity remains completely private</li>
+            <li><strong>Does not use analytics or tracking tools</strong> - No third-party services monitor your usage</li>
+            <li><strong>Processes data locally only</strong> - All operations happen within your browser</li>
+          </ul>
+        </div>
+
+        <div class="privacy-section">
+          <h2>How We Use Information</h2>
+          <p>The extension accesses the following data solely for its core functionality:</p>
+          
+          <h3>Page Information</h3>
+          <p>When you click "Send to Telegram", the extension reads the current page's title and URL to format the message. This data is sent directly to Telegram's API and is not stored or processed elsewhere.</p>
+          
+          <h3>Local Storage</h3>
+          <p>The extension uses browser local storage to save your Bot Token and Chat ID. This data never leaves your device except when making API calls to Telegram, and is stored securely within your browser's sandboxed environment.</p>
+        </div>
+
+        <div class="privacy-section">
+          <h2>Data Sharing and Third Parties</h2>
+          <p>We want to be crystal clear:</p>
+          <ul>
+            <li>We do not sell your data</li>
+            <li>We do not share your data with third parties</li>
+            <li>We do not have servers that receive your data</li>
+            <li>No external analytics or advertising services are integrated</li>
+          </ul>
+          <p>The only external communication is with Telegram's official API (api.telegram.org) when you explicitly choose to send a message.</p>
+        </div>
+
+        <div class="privacy-section">
+          <h2>Permissions Explained</h2>
+          <p>Telegram Saver requires certain browser permissions to function. Here's why:</p>
+
+          <div class="permission-card">
+            <h4>activeTab</h4>
+            <p>Allows access to the current tab's URL and title when you click the extension icon or use the context menu. This permission only activates on user interaction.</p>
+          </div>
+
+          <div class="permission-card">
+            <h4>storage</h4>
+            <p>Required to save your Bot Token and Chat ID locally in your browser. This data is stored in Chrome's secure local storage and never transmitted to our servers.</p>
+          </div>
+
+          <div class="permission-card">
+            <h4>contextMenus</h4>
+            <p>Enables the right-click menu option "Send to Telegram" for quick access to the extension's functionality.</p>
+          </div>
+
+          <div class="permission-card">
+            <h4>scripting</h4>
+            <p>Required to extract the page title from the active tab. This permission is used minimally and only when you initiate a send action.</p>
+          </div>
+        </div>
+
+        <div class="privacy-section">
+          <h2>Data Security</h2>
+          <p>All data processed by Telegram Saver remains within the secure, sandboxed environment of your browser. We follow browser extension security best practices to ensure:</p>
+          <ul>
+            <li>No unauthorized access to your data</li>
+            <li>Isolation from other extensions and web pages</li>
+            <li>Compliance with browser security policies</li>
+            <li>Secure transmission to Telegram via HTTPS</li>
+          </ul>
+        </div>
+
+        <div class="privacy-section">
+          <h2>Your Rights and Control</h2>
+          <p>You have complete control over the extension:</p>
+          <ul>
+            <li><strong>Disable or Remove:</strong> You can disable or uninstall the extension at any time through your browser settings</li>
+            <li><strong>Clear Data:</strong> You can clear any locally stored credentials by removing the extension or clearing extension data</li>
+            <li><strong>Transparency:</strong> The extension's behavior can be inspected through browser developer tools</li>
+          </ul>
+        </div>
+
+        <div class="privacy-section">
+          <h2>Children's Privacy</h2>
+          <p>Telegram Saver is a productivity tool and is not directed at children under 13 years of age. We do not knowingly collect information from children. Since we don't collect any personal information at all, this risk is inherently minimized.</p>
+        </div>
+
+        <div class="privacy-section">
+          <h2>Changes to This Privacy Policy</h2>
+          <p>We may update this Privacy Policy from time to time to reflect changes in the extension or legal requirements. When we do, we will update the "Last Updated" date at the top of this page. We encourage you to review this policy periodically.</p>
+          <p>Continued use of the extension after changes constitutes acceptance of the updated policy.</p>
+        </div>
+
+        <div class="privacy-section">
+          <h2>Open Source and Transparency</h2>
+          <p>We believe in transparency. The extension's code can be inspected through your browser's extension management interface, allowing technically inclined users to verify our privacy claims.</p>
+        </div>
+
+        <div class="privacy-section">
+          <h2>Contact Us</h2>
+          <p>If you have any questions, concerns, or requests regarding this Privacy Policy or our privacy practices, please don't hesitate to contact us:</p>
+          <p><strong>Email:</strong> <a href="mailto:dong.yy1916@gmail.com">dong.yy1916@gmail.com</a></p>
+          <p>We take your privacy seriously and will respond to your inquiries as promptly as possible.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2026 Telegram Saver. All rights reserved. | <a href="#" onclick="showPage('privacy')">Privacy Policy</a></p>
+  </footer>
+
+  <script>
+    function showPage(pageId) {
+      // Hide all pages
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+      });
+      
+      // Show selected page
+      document.getElementById(pageId).classList.add('active');
+      
+      // Update nav links
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.dataset.page === pageId) {
+          link.classList.add('active');
+        }
+      });
+      
+      // Scroll to top
+      window.scrollTo(0, 0);
+      
+      // Update URL hash
+      history.pushState(null, '', pageId === 'landing' ? '#' : '#privacy');
+    }
+
+    // Handle browser back/forward
+    window.addEventListener('hashchange', () => {
+      const page = location.hash === '#privacy' ? 'privacy' : 'landing';
+      showPage(page);
+    });
+
+    // Handle initial hash
+    if (location.hash === '#privacy') {
+      showPage('privacy');
+    }
+  </script>
+</body>
+</html>
