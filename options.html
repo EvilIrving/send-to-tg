@@ -3,27 +3,132 @@
 <head>
   <meta charset="UTF-8">
   <style>
-    body { padding: 20px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 400px; }
-    h2 { margin-top: 0; font-size: 18px; }
-    label { display: block; margin-top: 12px; font-size: 13px; color: #666; }
-    input { width: 100%; padding: 10px; margin-top: 6px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
-    button { margin-top: 16px; padding: 10px 24px; cursor: pointer; background: #229ED9; color: white; border: none; border-radius: 6px; font-size: 14px; }
-    button:hover { background: #1a8ac4; }
-    #status { margin-top: 12px; font-size: 13px; }
-    .success { color: #28a745; }
+    * { box-sizing: border-box; }
+    body {
+      padding: 32px;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8f9fa;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 28px;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #eee;
+    }
+    .header svg {
+      width: 28px;
+      height: 28px;
+      fill: #229ED9;
+    }
+    h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #555;
+    }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #333;
+      background: #fafafa;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+    input:focus {
+      border-color: #229ED9;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(34, 158, 217, 0.1);
+    }
+    input::placeholder {
+      color: #999;
+    }
+    button {
+      width: 100%;
+      margin-top: 8px;
+      padding: 12px 24px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #229ED9 0%, #1e8bc3 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    button:hover {
+      background: linear-gradient(135deg, #1e8bc3 0%, #1a7ab0 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(34, 158, 217, 0.3);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+    #status {
+      margin-top: 16px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: center;
+      display: none;
+    }
+    #status:not(:empty) {
+      display: block;
+    }
+    .success {
+      color: #00b894;
+      background: #f0fff4;
+    }
+    .error {
+      color: #d63031;
+      background: #fff5f5;
+    }
   </style>
 </head>
 <body>
-  <h2>Telegram Saver 配置</h2>
+  <div class="container">
+    <div class="header">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+      <h2>Telegram Saver 配置</h2>
+    </div>
 
-  <label>Bot Token</label>
-  <input type="text" id="token" placeholder="从 @BotFather 获取">
+    <div class="form-group">
+      <label>Bot Token</label>
+      <input type="text" id="token" placeholder="从 @BotFather 获取">
+    </div>
 
-  <label>Chat ID 或 @频道名</label>
-  <input type="text" id="chatId" placeholder="-100123456789 或 @channel">
+    <div class="form-group">
+      <label>Chat ID 或 @频道名</label>
+      <input type="text" id="chatId" placeholder="-100123456789 或 @channel">
+    </div>
 
-  <button id="save">保存</button>
-  <p id="status"></p>
+    <button id="save">保存配置</button>
+    <div id="status"></div>
+  </div>
 
   <script src="options.js"></script>
 </body>

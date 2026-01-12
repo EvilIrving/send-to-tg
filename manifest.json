@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Telegram Saver",
   "version": "1.0",
-  "description": "Send page to Telegram with one click",
+  "description": "Save links, pages, and selected text to Telegram with one click. Quick share to your channels or groups.",
   "icons": {
     "16": "icons/icon-16.png",
     "48": "icons/icon-48.png",
